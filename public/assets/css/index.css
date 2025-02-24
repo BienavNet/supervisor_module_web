@@ -1,0 +1,41 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+label {
+    font-weight: 700 !important;
+}
+
+img {
+    object-fit: fill;
+}
+
+input {
+    background-color: #80808025 !important;
+}
+
+input[type=checkbox]:checked {
+    background-color: #2626d3ab !important;
+}
+
+button {
+    background-color: #57C84D !important;
+}
+
+button:hover {
+    background-color: #57c84da9 !important;
+}
+
+.row {
+    height: 60vh !important;
+}
+
+.title {
+    font-size: xx-large;
+    font-weight: 400;
+    font-family:  'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
