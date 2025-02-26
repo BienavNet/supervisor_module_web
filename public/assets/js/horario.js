@@ -13,6 +13,7 @@ const registerBtn = document.getElementById("registerBtn")
 
 registerBtn.addEventListener('click', (e) => {
     const select = document.getElementById("docentes-select")
+    const select2 = document.getElementById("asignatura-select")
 
     fetch(`${API_BASE}/docente/`, {
         headers: {
@@ -30,6 +31,18 @@ registerBtn.addEventListener('click', (e) => {
                 select.appendChild(option)
 
             });
+        })
+
+    fetch('../json/asignaturas.json')
+        .then(result => result.json())
+        .then(result => {
+            result.forEach(result => {
+                let option = document.createElement('option')
+                option.value = result.asignatura
+                option.innerHTML = `${result.asignatura}`.toUpperCase()
+                select2.appendChild(option)
+            })
+
         })
 
 })
@@ -62,12 +75,19 @@ function editButtonClick(element) {
     const children = element.parentElement.parentElement.parentElement.children
 
     const doc_select = document.getElementById("edit-docentes-select")
-    const subject = document.getElementById("edit-subject")
+    const subject = document.getElementById("edit-subject-select")
     const day_select = document.getElementById("edit-day-select")
     const tstart = document.getElementById("edit-tstart")
     const tend = document.getElementById("edit-tend")
 
-    fetch(`${API_BASE}/docente/${children[3].innerText}`, {
+    let doc_id = children[1].innerText.toString().split(" ")[2]
+    let asignatura = children[2].innerText
+    let dia = children[3].innerText
+    let inicio = children[4].innerText
+    let fin = children[5].innerText
+    let id = parseInt(children[0].innerText)
+
+    fetch(`${API_BASE}/docente/`, {
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${document.cookie.replace("access_token=", "").split("; ")[0]}`
@@ -75,23 +95,39 @@ function editButtonClick(element) {
         credentials: "same-origin"
     })
         .then(result => result.json())
-        .then(result => {
-            let option = document.createElement('option')
-            option.value = element.docente_id
-            option.innerHTML = `${element.nombre} ${element.apellido} ${element.cedula}`.toUpperCase()
-            doc_select.appendChild(option)
+        .then(element => {
+            doc_select.innerHTML = ''
+            element.forEach(element => {
+                let option = document.createElement('option')
+                option.value = element.docente_id
+                option.innerHTML = `${element.nombre} ${element.apellido} ${element.cedula}`.toUpperCase()
+                if (element.cedula == doc_id) {
+                    option.selected = true
+                }
+                doc_select.appendChild(option)
+            })
         })
 
 
-    let asignatura = children[4].innerText
-    let dia = children[5].innerText
-    let inicio = children[6].innerText
-    let fin = children[7].innerText
-    let id = parseInt(children[0].innerText)
+    fetch('../json/asignaturas.json')
+        .then(result => result.json())
+        .then(result => {
+            subject.innerHTML = ''
+            result.forEach(result => {
+                let option = document.createElement('option')
+                option.value = result.asignatura
+                option.innerHTML = `${result.asignatura}`.toUpperCase()
+
+                if (result.asignatura == asignatura) {
+                    option.selected = true
+                }
+
+                subject.appendChild(option)
+            })
+
+        })
 
 
-
-    subject.value = asignatura
     day_select.value = dia
     tstart.value = inicio
     tend.value = fin
@@ -99,7 +135,7 @@ function editButtonClick(element) {
     editForm.addEventListener("submit", e => {
         e.preventDefault()
 
-        if (subject.value == '' || subject.value == undefined) {
+        if (subject.value == undefined) {
             alert("El campo nombre no puede estar vacío.")
         } else if (day_select.value == '' || day_select.value == undefined) {
             alert("El campo apellido no puede estar vacío.")
@@ -144,8 +180,8 @@ function editButtonClick(element) {
                                 credentials: "same-origin"
 
                             })
-                            .then(response => response.json())
-                            then(response=> {
+                                .then(response => response.json())
+                            then(response => {
                                 alert(`Respuesta del servidor: ${response.message}`)
                             })
 
@@ -167,14 +203,14 @@ registerForm.addEventListener("submit", e => {
     e.preventDefault()
 
     const doc_select = document.getElementById("docentes-select")
-    const subject = document.getElementById("subject")
+    const subject = document.getElementById("asignatura-select")
     const day_select = document.getElementById("day-select")
     const tstart = document.getElementById("tstart")
     const tend = document.getElementById("tend")
 
     if (doc_select.value == undefined) {
         alert("Tiene que seleccionar a un docente.")
-    } else if (subject.value == '' || subject.value == undefined) {
+    } else if (subject.value == undefined) {
         alert("Tiene que escribir el nombre de la asignatura.")
     } else if (day_select.value == undefined) {
         alert("Tiene que seleccionar un día.")
@@ -252,7 +288,6 @@ let loadData = fetch(`${API_BASE_URL}/`, {
 function main() {
 
     const loadingData = loadData.then(result => {
-        console.log(result)
         let table = new DataTable('#myTable', {
             dom: 'Bfrtip',
             paging: true,

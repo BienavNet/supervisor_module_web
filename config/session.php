@@ -6,6 +6,14 @@ session_start();
 
 // print_r($_GET);
 
+if (isset($_GET['logout']) && $_GET['logout'] == 'true'){
+    session_destroy();
+    unset($_SESSION);
+    unset($_COOKIE);
+    header('Location: '. constant("PUBLIC_BASE_URL") . '/index');
+    exit();
+}
+
 
 if (!empty($_GET['access_token'])){
     $_SESSION['access_token'] = $_GET['access_token'];

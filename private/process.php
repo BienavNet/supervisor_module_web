@@ -1,6 +1,6 @@
 <?php
 
-use PhpOffice\PhpSpreadsheet\Calculation\Logical\Boolean;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 
 include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php");
 require "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module/phpspreadsheet/vendor/autoload.php";
@@ -81,7 +81,8 @@ function createScheduleDetails($horario_id, $dia, $hora_inicio, $hora_fin)
     }
 }
 
-function createClasses($horario_id, $salon, $supervisor, $fecha){
+function createClasses($horario_id, $salon, $supervisor, $fecha)
+{
 
     $response = curlRequest(URLBASE . "/clase/register", 'POST', array(
         'horario' => $horario_id,
@@ -98,7 +99,42 @@ function createClasses($horario_id, $salon, $supervisor, $fecha){
     }
 }
 
-function getSalonId($salon) {
+function createDocentes($nombre, $apellido, $cedula, $correo, $contrasena)
+{
+    $response = curlRequest(URLBASE . "/docente/save", 'POST', array(
+        'nombre' => $nombre,
+        'apellido' => $apellido,
+        'cedula' => intval($cedula),
+        'correo' => $correo,
+        'contrasena' => $contrasena
+    ));
+
+    if ($response['httpcode'] == 200) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function createSupervisors($nombre, $apellido, $cedula, $correo, $contrasena)
+{
+    $response = curlRequest(URLBASE . "/supervisor/save", 'POST', array(
+        'nombre' => $nombre,
+        'apellido' => $apellido,
+        'cedula' => intval($cedula),
+        'correo' => $correo,
+        'contrasena' => $contrasena
+    ));
+
+    if ($response['httpcode'] == 200) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getSalonId($salon)
+{
     $response = curlRequest(URLBASE . "/salon/salon/{$salon}", 'GET');
     if ($response['httpcode'] == 200) {
         return $response['response'][0]['salon_id'];
@@ -107,15 +143,51 @@ function getSalonId($salon) {
     }
 }
 
-use PhpOffice\PhpSpreadsheet\Reader\Xls\LoadSpreadsheet;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
+function loadFile()
+{
+    $target_dir = "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module/private/uploads/";
+    $files = scandir($target_dir);
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $fileExt = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+    $new_file = $target_dir . "upload." . $fileExt;
+
+    # se limpia el directorio de archivos antiguos 
+    foreach ($files as $file) {
+        if ($file != "." && $file != "..") {
+            unlink($target_dir . $file);
+        }
+    }
+
+    $uploadOk = 1;
+
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $new_file)) {
+        echo "The file " . htmlspecialchars(basename($new_file)) . " has been uploaded.";
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+        $uploadOk = 0;
+    }
+
+    return [
+        'status' => $uploadOk,
+        'file' => $new_file
+    ];
+}
+
+$action = $_POST['action'] ?? null;
+$file_upload_status = loadFile();
+
+if (!$file_upload_status['status']) {
+    echo "Error al subir el archivo";
+    return;
+}
+
+
 
 $reader = new ReaderXlsx();
-$spreadSheet = $reader->load("{$_SERVER['DOCUMENT_ROOT']}/supervisor_module/example.xlsx");
+$spreadSheet = $reader->load($file_upload_status['file']);
 $workSheet = $spreadSheet->getActiveSheet();
 
-$workSheetInfo = $reader->listWorksheetInfo("{$_SERVER['DOCUMENT_ROOT']}/supervisor_module/example.xlsx");
+$workSheetInfo = $reader->listWorksheetInfo($file_upload_status['file']);
 
 $parsedData = $workSheet->toArray();
 
@@ -123,59 +195,92 @@ $headers = $parsedData[0];
 $data = array_slice($parsedData, 1);
 $data_error = array();
 
-for ($i = 0; $i < count($data); $i++) {
-    $doc_id = docenteExists($data[$i][1]);
-    if ($doc_id == null) {
-        $data_error[] = $data[$i];
-        continue;
-    }
-    $supervisor_id = supervisorExists($data[$i][7]);
-    if ($supervisor_id == null) {
-        $data_error[] = $data[$i];
-        continue;
-    }
-    $salon_id = getSalonId($data[$i][6]);
-    if ($salon_id == null) {
-        $data_error[] = $data[$i];
-        continue;
-    }
-    $horario_id = createSchedule($doc_id, $data[$i][2]);
-    if ($horario_id == null) {
-        $data_error[] = $data[$i];
-        continue;
-    }
-    $detalle_horario_id = createScheduleDetails($horario_id, $data[$i][3], $data[$i][4], $data[$i][5]);
-    if ($detalle_horario_id == null) {
-        $data_error[] = $data[$i];
-        continue;
-    }
-    $start_date = date('Y-m-d', strtotime($data[$i][8]));
-    $end_date = date('Y-m-d', strtotime($data[$i][9]));
 
-    do {
-        
-        $status = createClasses($horario_id, $salon_id, $supervisor_id, $start_date);
-        $start_date = date("Y-m-d", strtotime($start_date.'+ 7 days'));
-        if (!$status) {
-            $data_error[] = $data[$i];
-            continue;
+switch ($action) {
+    case 'registerClasses':
+        for ($i = 0; $i < count($data); $i++) {
+            $doc_id = docenteExists($data[$i][1]);
+            if ($doc_id == null) {
+                $data_error[] = $data[$i];
+                continue;
+            }
+            $supervisor_id = supervisorExists($data[$i][7]);
+            if ($supervisor_id == null) {
+                $data_error[] = $data[$i];
+                continue;
+            }
+            $salon_id = getSalonId($data[$i][6]);
+            if ($salon_id == null) {
+                $data_error[] = $data[$i];
+                continue;
+            }
+            $horario_id = createSchedule($doc_id, $data[$i][2]);
+            if ($horario_id == null) {
+                $data_error[] = $data[$i];
+                continue;
+            }
+            $detalle_horario_id = createScheduleDetails($horario_id, $data[$i][3], $data[$i][4], $data[$i][5]);
+            if ($detalle_horario_id == null) {
+                $data_error[] = $data[$i];
+                continue;
+            }
+            $start_date = date('Y-m-d', strtotime($data[$i][8]));
+            $end_date = date('Y-m-d', strtotime($data[$i][9]));
+
+            do {
+
+                $status = createClasses($horario_id, $salon_id, $supervisor_id, $start_date);
+                $start_date = date("Y-m-d", strtotime($start_date . '+ 7 days'));
+                if (!$status) {
+                    $data_error[] = $data[$i];
+                    continue;
+                }
+            } while ($start_date <= $end_date);
+        }
+        echo json_encode([
+            'errors' => count($data_error),
+            'data' => $data_error
+        ]);
+        break;
+
+    case 'registerSupervisors':
+
+        for ($i = 0; $i < count($data); $i++) {
+
+            $status = createSupervisors($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
+            if (!$status) {
+                $data_error[] = $data[$i];
+            }
         }
 
-    } while ($start_date <= $end_date);
+        echo json_encode([
+            'errors' => count($data_error),
+            'data' => $data_error
+        ]);
+        break;
 
+    case 'registerDocentes':
+
+        for ($i = 0; $i < count($data); $i++) {
+
+            $status = createDocentes($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
+            if (!$status) {
+                $data_error[] = $data[$i];
+            }
+        }
+
+        echo json_encode([
+            'errors' => count($data_error),
+            'data' => $data_error
+        ]);
+
+        break;
+
+    default:
+        echo json_encode([
+            'errors' => 1,
+            'data' => [], 
+            'message' => "No se ha seleccionado una acción"
+        ]);
+        break;
 }
-print_r($data_error);
-echo "\nAccion Terminada";
-
-// print_r($headers);
-
-// print_r(docenteExists("112"));
-
-$timestamp1 = "3/30/2025";
-$timestamp2 = "3/30/2025";
-
-echo var_export($timestamp1 < $timestamp2);
-// $date_1 = date("m/d/Y", strtotime($timestamp.'+ 7 days'));
-// $date_2 = date("m/d/Y", strtotime('4/30/2025'));
-// $check = $date_1 <= $date_2;
-// echo var_export($check);

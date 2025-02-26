@@ -35,18 +35,11 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php"
                 Registrar Horarios
             </button>
         </div>
+        
         <div class="row m-md-5">
             <table class="table" id="myTable">
                 <thead>
                     <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Docente</th>
-                        <!-- <th scope="col">Apellido Docente</th>
-                        <th scope="col">Cédula</th> -->
-                        <th scope="col">Asignatura</th>
-                        <th scope="col">Día</th>
-                        <th scope="col">Hora: Inicio</th>
-                        <th scope="col">Hora: Fin</th>
                     </tr>
 
                 </thead>
@@ -62,50 +55,44 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php"
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Registrar Horario</h5>
+                    <h5 class="modal-title">Registrar Clases</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" id="registerForm">
                         <div class="my-3 mx-4">
-                            <label for="docentes-select">Docente: </label>
+                            <label for="horario-select">Horario: </label>
                             <div class="col-lg-8 my-3">
-                                <select id="docentes-select" class="form-control border rounded-pill">
+                                <select id="horario-select" class="form-control border rounded-pill">
 
                                 </select>
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="asignatura-select">Asignatura: </label>
+                            <label for="salon-select">Salon: </label>
                             <div class="col-lg-8 my-3">
-                                <select id="asignatura-select" class="form-control border rounded-pill">
+                                <select id="salon-select" class="form-control border rounded-pill">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="my-3 mx-4">
+                            <label for="supervisor-select">Supervisor: </label>
+                            <div class="col-lg-8 my-3">
+                                <select id="supervisor-select" class="form-control border rounded-pill">
 
                                 </select>
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="day-select">Día: </label>
+                            <label for="dstart">Fecha Inicio: </label>
                             <div class="col-lg-8 my-3">
-                                <select id="day-select" class="form-control border rounded-pill">
-                                    <option value="Lunes">Lunes</option>
-                                    <option value="Martes">Martes</option>
-                                    <option value="Miercoles">Miércoles</option>
-                                    <option value="Jueves">Jueves</option>
-                                    <option value="Viernes">Viernes</option>
-                                    <option value="Sabado">Sábado</option>
-                                </select>
+                                <input type="date" class="form-control border rounded-pill" id="dstart">
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="tstart">Hora Inicio: </label>
+                            <label for="dend">Fecha Fin: </label>
                             <div class="col-lg-8 my-3">
-                                <input type="text" class="form-control border rounded-pill" placeholder="10:00" id="tstart">
-                            </div>
-                        </div>
-                        <div class="my-3 mx-4">
-                            <label for="tend">Hora Fin: </label>
-                            <div class="col-lg-8 my-3">
-                                <input type="text" class="form-control border rounded-pill" placeholder="14:00" id="tend">
+                                <input type="date" class="form-control border rounded-pill" id="dend">
                             </div>
                         </div>
 
@@ -125,52 +112,48 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php"
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Actualizar docentes</h5>
+                    <h5 class="modal-title">Actualizar Clase</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form method="post" id="editForm">
                         <div class="my-3 mx-4">
-                            <label for="edit-docentes-select">Docente: </label>
+                            <label for="edit-horario-select">Horario: </label>
                             <div class="col-lg-8 my-3">
-                                <select id="edit-docentes-select" class="form-control border rounded-pill">
+                                <select id="edit-horario-select" class="form-control border rounded-pill">
 
                                 </select>
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="edit-subject-select">Asignatura: </label>
+                            <label for="edit-salon-select">Salon: </label>
                             <div class="col-lg-8 my-3">
-                                <select id="edit-subject-select" class="form-control border rounded-pill">
+                                <select id="edit-salon-select" class="form-control border rounded-pill">
 
                                 </select>
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="edit-day-select">Día: </label>
+                            <label for="edit-supervisor-select">Supervisor: </label>
                             <div class="col-lg-8 my-3">
-                                <select id="edit-day-select" class="form-control border rounded-pill">
-                                    <option value="Lunes">Lunes</option>
-                                    <option value="Martes">Martes</option>
-                                    <option value="Miercoles">Miércoles</option>
-                                    <option value="Jueves">Jueves</option>
-                                    <option value="Viernes">Viernes</option>
-                                    <option value="Sabado">Sábado</option>
+                                <select id="edit-supervisor-select" class="form-control border rounded-pill">
+
                                 </select>
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="edit-tstart">Hora Inicio: </label>
+                            <label for="edit-status">Estado: </label>
                             <div class="col-lg-8 my-3">
-                                <input type="text" class="form-control border rounded-pill" placeholder="10:00" id="edit-tstart">
+                                <input type="text" class="form-control border rounded-pill" placeholder="10:00" id="edit-status">
                             </div>
                         </div>
                         <div class="my-3 mx-4">
-                            <label for="edit-tend">Hora Fin: </label>
+                            <label for="edit-date">Nueva Fecha: </label>
                             <div class="col-lg-8 my-3">
-                                <input type="text" class="form-control border rounded-pill" placeholder="14:00" id="edit-tend">
+                                <input type="date" class="form-control border rounded-pill" placeholder="10:00" id="edit-date">
                             </div>
                         </div>
+                        
                         <div class="mt-4 mx4 row">
                             <div class="d-flex justify-content-end">
                                 <input type="submit" class="btn btn-primary" value="Actualizar">
@@ -183,7 +166,7 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php"
     </div>
 
     <?php echo constant("BOOTSTRAP_CDN_JS") ?>
-    <script src="../assets/js/horario.js"></script>
+    <script src="../assets/js/clase.js"></script>
 
 </body>
 
