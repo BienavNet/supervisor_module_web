@@ -22,6 +22,8 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
     <script src="../assets/js/datatables/buttons.print.min.js"></script>
     <script src="../assets/js/datatables/jszip.min.js"></script>
     <script src="../assets/js/datatables/vfs_fonts.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 
 <body>
