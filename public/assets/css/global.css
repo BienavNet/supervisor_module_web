@@ -1,0 +1,16 @@
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+}
+
+body {
+    overflow: auto;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}

@@ -1,6 +1,6 @@
 <?php
-include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/imports.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/imports.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,9 +9,8 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php echo constant("BOOTSTRAP_CDN_CSS") ?>
-    <link rel="stylesheet" href="<?php $_SERVER['DOCUMENT_ROOT'] ?>/supervisor_module/public/assets/css/supervisor.css">
-
-    <!-- DataTable Css import-->
+    <link rel="stylesheet" href="<?php $_SERVER['DOCUMENT_ROOT'] ?>/supervisor_module_web/public/assets/css/supervisor.css">
+    <link rel="stylesheet" href="<?php $_SERVER['DOCUMENT_ROOT'] ?>/supervisor_module_web/public/assets/css/global.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
     <script src="../assets/js/datatables/jquery-3.7.1.min.js"></script>
     <script src="../assets/js/datatables/dataTables.js"></script>
@@ -22,20 +21,18 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module/config/session.php"
     <script src="../assets/js/datatables/buttons.print.min.js"></script>
     <script src="../assets/js/datatables/jszip.min.js"></script>
     <script src="../assets/js/datatables/vfs_fonts.js"></script>
-
-
-    <title>Docentes</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </head>
 
 <body>
-    <div class="container-fluid" style="width: 100%;">
-        <div class="row m-md-5">
-            Este es mi modulo de docentes AQUI PUEDEN IR LAS OPCIONES PARA REGISTRAR, ETC
+    <div class="container-fluid">
+        <div style="margin: 1rem 0 0 2rem;">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Registrar Docentes
             </button>
         </div>
-        <div class="row m-md-5">
+        <div class="row m-md-3">
             <table class="table" id="myTable">
                 <thead>
                     <tr>
