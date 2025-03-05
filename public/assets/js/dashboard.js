@@ -37,4 +37,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.addEventListener("resize", handleResize);
   handleResize();
+
+  
 });
+
+function printPage() {
+  window.print()
+}
+

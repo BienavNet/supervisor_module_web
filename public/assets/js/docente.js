@@ -213,7 +213,7 @@ function main() {
         { title: "Correo" },
         {
           title: "Acciones",
-          defaultContent: `<div class="col d-flex flex-row">
+          defaultContent: `<div class="col d-flex flex-row notexport">
     <button class="btn btn-warning my-3 mx-1" data-bs-toggle="modal" data-bs-target="#editModal" onclick="editButtonClick(this)">Editar</button>
     <button class="btn btn-danger my-3 mx-1" onclick="deleteButtonClick(this)">Eliminar</button>
 </div>`,
@@ -226,30 +226,45 @@ function main() {
           text: "Copiar",
           titleAttr: "Copiar",
           className: "btn btn-primary my-3 mx-1",
+          exportOptions: {
+            columns: 'th:not(:last-child)'
+        }
         },
         {
           extend: "excelHtml5",
           text: "Excel",
           titleAttr: "Excel",
           className: "btn btn-success my-3 mx-1",
+          exportOptions: {
+            columns: 'th:not(:last-child)'
+        }
         },
         {
           extend: "csvHtml5",
           text: "CSV",
           titleAttr: "CSV",
           className: "btn btn-secondary my-3 mx-1",
+          exportOptions: {
+            columns: 'th:not(:last-child)'
+        }
         },
         {
           extend: "pdfHtml5",
           text: "PDF",
           titleAttr: "PDF",
           className: "btn btn-danger my-3 mx-1",
+          exportOptions: {
+            columns: 'th:not(:last-child)'
+        }
         },
         {
           extend: "print",
           text: "Imprimir",
           titleAttr: "Imprimir",
           className: "btn btn-info my-3 mx-1",
+          exportOptions: {
+            columns: 'th:not(:last-child)'
+        }
         },
       ],
     });

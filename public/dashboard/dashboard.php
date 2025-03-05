@@ -16,12 +16,16 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
 
 <body>
  <div class="container-fluid col justify-content-center my-5" style="width: 100%;">
+    <div class="row m-3">
+        <button class="btn btn-primary" onclick="printPage()">Imprimir</button>
+    </div>
     <div id="salonMenosUtilizadoChart"></div>
     <div id="horasMasFrecuentesChart"></div>
     <div id="diasMasAsignadoChart"></div>
     <div id="docenteMasComentariosChart"></div>
  </div>
     <?php echo constant("BOOTSTRAP_CDN_JS") ?>
+    <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/supervisor_module_web/public/assets/js/dashboard.js"></script>
 </body>
 
 </html>
