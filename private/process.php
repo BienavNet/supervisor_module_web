@@ -205,27 +205,27 @@ switch ($action) {
         for ($i = 0; $i < count($data); $i++) {
             $doc_id = docenteExists($data[$i][1]);
             if ($doc_id == null) {
-                $data_error[] = $data[$i];
+                $data_error[] = array($data[$i], "Docente Error");
                 continue;
             }
             $supervisor_id = supervisorExists($data[$i][7]);
             if ($supervisor_id == null) {
-                $data_error[] = $data[$i];
+                $data_error[] = array($data[$i], "Supervisor Error");
                 continue;
             }
             $salon_id = getSalonId($data[$i][6]);
             if ($salon_id == null) {
-                $data_error[] = $data[$i];
+                $data_error[] = array($data[$i], "Salon Error");
                 continue;
             }
             $horario_id = createSchedule($doc_id, $data[$i][2]);
             if ($horario_id == null) {
-                $data_error[] = $data[$i];
+                $data_error[] = array($data[$i], "Horario Error");
                 continue;
             }
             $detalle_horario_id = createScheduleDetails($horario_id, $data[$i][3], $data[$i][4], $data[$i][5]);
             if ($detalle_horario_id == null) {
-                $data_error[] = $data[$i];
+                $data_error[] =array($data[$i], "Detalles Error");
                 continue;
             }
             $start_date = date('Y-m-d', strtotime($data[$i][8]));
@@ -236,7 +236,7 @@ switch ($action) {
                 $status = createClasses($horario_id, $salon_id, $supervisor_id, $start_date);
                 $start_date = date("Y-m-d", strtotime($start_date . '+ 7 days'));
                 if (!$status) {
-                    $data_error[] = $data[$i];
+                    $data_error[] = array($data[$i], "Crear Clases Error");
                     continue;
                 }
             } while ($start_date <= $end_date);
