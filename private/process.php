@@ -143,6 +143,10 @@ function getSalonId($salon)
     }
 }
 
+if(!isset($_FILES["fileToUpload"]) || $_FILES["fileToUpload"]["error"] === UPLOAD_ERR_NO_FILE){
+    echo "Error, No se ha seleccionado ningun archivo.  \n";
+}
+
 function loadFile()
 {
     $target_dir = "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module_web/private/uploads/";

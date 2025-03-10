@@ -10,9 +10,9 @@ const registerBtn = document.getElementById("registerBtn");
 const useToastify = (messsage, status) => {
   let background;
   if (status === "success") {
-    background = "linear-gradient(to right, #f10909, #5b0b0b)";
-  } else if (status === "error") {
     background = "linear-gradient(to right, rgb(46, 184, 11), rgb(62, 135, 6))";
+  } else if (status === "error") {
+    background = "linear-gradient(to right, #f10909, #5b0b0b)";
   }
   return Toastify({
     text: messsage,
@@ -391,8 +391,8 @@ function main() {
           titleAttr: "Copiar",
           className: "btn btn-primary my-3 mx-1",
           exportOptions: {
-            columns: 'th:not(:last-child)'
-          }
+            columns: "th:not(:last-child)",
+          },
         },
         {
           extend: "excelHtml5",
@@ -400,8 +400,8 @@ function main() {
           titleAttr: "Excel",
           className: "btn btn-success my-3 mx-1",
           exportOptions: {
-            columns: 'th:not(:last-child)'
-          }
+            columns: "th:not(:last-child)",
+          },
         },
         {
           extend: "csvHtml5",
@@ -409,8 +409,8 @@ function main() {
           titleAttr: "CSV",
           className: "btn btn-secondary my-3 mx-1",
           exportOptions: {
-            columns: 'th:not(:last-child)'
-          }
+            columns: "th:not(:last-child)",
+          },
         },
         {
           extend: "pdfHtml5",
@@ -418,8 +418,8 @@ function main() {
           titleAttr: "PDF",
           className: "btn btn-danger my-3 mx-1",
           exportOptions: {
-            columns: 'th:not(:last-child)'
-          }
+            columns: "th:not(:last-child)",
+          },
         },
         {
           extend: "print",
@@ -427,8 +427,8 @@ function main() {
           titleAttr: "Imprimir",
           className: "btn btn-info my-3 mx-1",
           exportOptions: {
-            columns: 'th:not(:last-child)'
-          }
+            columns: "th:not(:last-child)",
+          },
         },
       ],
     });

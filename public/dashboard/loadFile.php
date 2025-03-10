@@ -43,7 +43,7 @@
       </ul>
     </div>
 </div>
-<form action="../../private/process.php" method="POST" enctype="multipart/form-data">
+<form id="uploadForm" method="POST" enctype="multipart/form-data">
 <div class="mb-3">
       <label for="fileToUpload" class="form-label">Seleccione el archivo a cargar:</label>
       <input type="file" name="fileToUpload" id="fileToUpload" class="form-control">
@@ -59,6 +59,44 @@
   </div>
   <button type="submit" name="submit" class="btn btn-primary">Cargar Archivo</button>
 </form>
+<script>
+  const useToastify = (messsage, status) => {
+  let background;
+  if (status === "success") {
+    background = "linear-gradient(to right, rgb(46, 184, 11), rgb(62, 135, 6))";
+  } else if (status === "error") {
+    background = "linear-gradient(to right, #f10909, #5b0b0b)";
+  }
+  return Toastify({
+    text: messsage,
+    className: "info",
+    style: {
+      background: background || "gray",
+    },
+  }).showToast();
+};
 
+  document.getElementById('uploadForm').addEventListener('submit', function (e){
+    e.preventDefault();
+    const formaData = new FormData(this)
+    
+    fetch('../../private/process.php',{
+      method:'POST',
+      body:formaData
+    })
+    .then(response => response.text())
+    .then(data =>{
+      if(data.indexOf("Error") !== -1){
+        useToastify(data, "error")
+      }
+      useToastify(data, "error")
+    }).catch(
+      e => {
+        useToastify(`error en el servidor ${e}`, "error")
+      }
+    )
+  })
+  </script>
 </body>
+
 </html>
