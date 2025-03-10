@@ -145,7 +145,7 @@ function getSalonId($salon)
 
 function loadFile()
 {
-    $target_dir = "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module/private/uploads/";
+    $target_dir = "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module_web/private/uploads/";
     $files = scandir($target_dir);
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $fileExt = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
