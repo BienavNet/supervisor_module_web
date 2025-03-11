@@ -283,13 +283,13 @@ switch ($action) {
         ]);
         break;
 
-    case 'registerSupervisors':
+    case 'registerSupervisor':
         $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
 
             $status = createSupervisors($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
             if (!$status) {
-                $data_error[] = $data[$i];
+                $data_error[] = array($data[$i], "No se pudo crear el supervisor.");
             }
         }
 
@@ -305,7 +305,7 @@ switch ($action) {
 
             $status = createDocentes($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
             if (!$status) {
-                $data_error[] = $data[$i];
+                $data_error[] = array($data[$i], "No se pudo crear el docente.");
             }
         }
 
