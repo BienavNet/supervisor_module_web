@@ -27,7 +27,13 @@
 </head>
 <body>
 
-<div class="instructions pt5">
+<div id="loader" style="display: none; text-align: center; margin-bottom: 20px;">
+    <div id="spinner" class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p id="loaderText">Procesando archivo, por favor espere...</p>
+  </div>
+  <div class="instructions pt5">
     <h4>Instrucciones para cargar el archivo</h4>
     <ol>
       <li>Seleccione el tipo de lista que desea registrar.</li>
@@ -59,6 +65,9 @@
   </div>
   <button type="submit" name="submit" class="btn btn-primary">Cargar Archivo</button>
 </form>
+
+
+
 <script>
   const useToastify = (messsage, status) => {
   let background;
@@ -76,26 +85,61 @@
   }).showToast();
 };
 
-  document.getElementById('uploadForm').addEventListener('submit', function (e){
-    e.preventDefault();
-    const formaData = new FormData(this)
-    
-    fetch('../../private/process.php',{
-      method:'POST',
-      body:formaData
-    })
+document.getElementById('uploadForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const formaData = new FormData(this)
+  const loader = document.getElementById('loader');
+
+  const submitButton = document.querySelector("button[type=submit]");
+  const fileInput = document.getElementById("fileToUpload");
+  const selectInput = document.getElementById("action");
+  const instructions = document.querySelector(".instructions.pt5");
+
+  fileInput.classList.remove("is-invalid");
+  selectInput.classList.remove("is-invalid");
+
+  loader.style.display = "block";
+  submitButton.disabled = true;
+  instructions.style.display = "none";
+  
+  fetch('../../private/process.php', {
+    method: 'POST',
+    body: formaData
+  })
     .then(response => response.text())
-    .then(data =>{
-      if(data.indexOf("Error") !== -1){
-        useToastify(data, "error")
+    .then(text => {
+      try {
+        const data = JSON.parse(text);
+        if (data.errors > 0) {
+          fileInput.classList.add("is-invalid");
+          selectInput.classList.add("is-invalid");
+          useToastify(data.message, "error");
+          data.data.forEach(error => {
+            const errorMessage = error[1];
+            useToastify(errorMessage, "error");
+          });
+        } else {
+          fileInput.classList.remove("is-invalid");
+          selectInput.classList.remove("is-invalid");
+          useToastify("Carga exitosa", "success");
+        }
+      } catch (e) {
+        fileInput.classList.add("is-invalid");
+        selectInput.classList.add("is-invalid");
+        useToastify(`Error al procesar la respuesta: ${text}`, "error");
       }
-      useToastify(data, "error")
     }).catch(
       e => {
+        fileInput.classList.add("is-invalid");
+        selectInput.classList.add("is-invalid");
         useToastify(`error en el servidor ${e}`, "error")
       }
-    )
-  })
+    ).finally(() => {
+      loader.style.display = "none";
+      instructions.style.display = "block";
+      submitButton.disabled = false;
+    });
+})
   </script>
 </body>
 

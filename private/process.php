@@ -16,7 +16,8 @@ function curlRequest($url, $method, $data = null)
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'Content-Type: application/json'
     ));
-
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60); 
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30); 
     if ($data != null) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     }
@@ -29,6 +30,9 @@ function curlRequest($url, $method, $data = null)
         'response' => $response,
         'httpcode' => $httpcode
     );
+}
+function cleanCell($cell) {
+    return trim(preg_replace('/\s+/', ' ', $cell));
 }
 
 function docenteExists($cedula)
@@ -92,7 +96,7 @@ function createClasses($horario_id, $salon, $supervisor, $fecha)
         'estado' => "pendiente"
     ));
 
-    if ($response['httpcode'] == 200) {
+    if (isset($response['httpcode']) && $response['httpcode'] == 200) {
         return true;
     } else {
         return false;
@@ -144,7 +148,12 @@ function getSalonId($salon)
 }
 
 if(!isset($_FILES["fileToUpload"]) || $_FILES["fileToUpload"]["error"] === UPLOAD_ERR_NO_FILE){
-    echo "Error, No se ha seleccionado ningun archivo.  \n";
+    echo json_encode([
+        "errors" => 1,
+        "data" => [],
+        "message" => "No se ha seleccionado ningún archivo"
+    ]);
+    exit;
 }
 
 function loadFile()
@@ -165,10 +174,15 @@ function loadFile()
     $uploadOk = 1;
 
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $new_file)) {
-        echo "The file " . htmlspecialchars(basename($new_file)) . " has been uploaded.";
+        // return ['status' => 1, 'file' => $new_file];
+        
     } else {
-        echo "Sorry, there was an error uploading your file.";
-        $uploadOk = 0;
+        echo json_encode([
+            "errors" => 1,
+            "data" => [],
+            "message" => "Se ha producido un error al cargar el archivo."
+        ]);
+        $uploadOk = 0;      
     }
 
     return [
@@ -181,7 +195,11 @@ $action = $_POST['action'] ?? null;
 $file_upload_status = loadFile();
 
 if (!$file_upload_status['status']) {
-    echo "Error al subir el archivo";
+    echo json_encode([
+        "errors" => 1,
+        "data" => [],
+        "message" => "Error al subir el archivo."
+    ]);
     return;
 }
 
@@ -199,40 +217,58 @@ $headers = $parsedData[0];
 $data = array_slice($parsedData, 1);
 $data_error = array();
 
+function isValidDay($day)
+{
+    $validDays = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+    return in_array(strtolower($day), $validDays);
+}
 
 switch ($action) {
     case 'registerClasses':
+        // $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
             $doc_id = docenteExists($data[$i][1]);
+            echo("docenteExists?: ");
+            var_dump($doc_id);
             if ($doc_id == null) {
-                $data_error[] = array($data[$i], "Docente Error");
+                $data_error[] = array($data[$i], "Docente no existe. Por favor, regístrelo primero.");
                 continue;
             }
             $supervisor_id = supervisorExists($data[$i][7]);
+            echo("supervisorExists?: ");
+            var_dump($doc_id);
             if ($supervisor_id == null) {
-                $data_error[] = array($data[$i], "Supervisor Error");
+                $data_error[] = array($data[$i], "Supervisor no existe. Por favor, regístrelo primero. ");
                 continue;
             }
+            
+            if (!isValidDay($data[$i][3])) {
+                echo("dia valido -> :  ");
+                var_dump($data[$i]);
+                $data_error[] = array($data[$i], "Día no válido. Solo se permiten lunes a sábado.");
+                continue;
+            }
+
             $salon_id = getSalonId($data[$i][6]);
             if ($salon_id == null) {
-                $data_error[] = array($data[$i], "Salon Error");
+                $data_error[] = array($data[$i], "Salon no existe. Por favor, regístrelo primero.");
                 continue;
             }
+
             $horario_id = createSchedule($doc_id, $data[$i][2]);
             if ($horario_id == null) {
-                $data_error[] = array($data[$i], "Horario Error");
+                $data_error[] = array($data[$i], "Horario no existe. Por favor, regístrelo primero.");
                 continue;
             }
             $detalle_horario_id = createScheduleDetails($horario_id, $data[$i][3], $data[$i][4], $data[$i][5]);
             if ($detalle_horario_id == null) {
-                $data_error[] =array($data[$i], "Detalles Error");
+                $data_error[] =array($data[$i], "Detalles no existe. Por favor, regístrelo primero.");
                 continue;
             }
             $start_date = date('Y-m-d', strtotime($data[$i][8]));
             $end_date = date('Y-m-d', strtotime($data[$i][9]));
 
             do {
-
                 $status = createClasses($horario_id, $salon_id, $supervisor_id, $start_date);
                 $start_date = date("Y-m-d", strtotime($start_date . '+ 7 days'));
                 if (!$status) {
@@ -248,7 +284,7 @@ switch ($action) {
         break;
 
     case 'registerSupervisors':
-
+        $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
 
             $status = createSupervisors($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
@@ -264,7 +300,7 @@ switch ($action) {
         break;
 
     case 'registerDocentes':
-
+        $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
 
             $status = createDocentes($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);

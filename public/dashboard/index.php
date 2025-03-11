@@ -10,7 +10,6 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php echo constant("BOOTSTRAP_CDN_CSS") ?>
     <link rel="stylesheet" href="<?php $_SERVER['DOCUMENT_ROOT'] ?>/supervisor_module_web/public/assets/css/dashboard.css">
-    <script src="../assets/js/dashboard.js"></script>
     <title>Dashboard</title>
 </head>
 
@@ -314,23 +313,8 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
     </div>
   </div>
   <?php echo constant("BOOTSTRAP_CDN_JS") ?>
-
-  <script>
-  const PUBLIC_BASE_URL = "<?php echo constant('PUBLIC_BASE_URL'); ?>";
-  document.addEventListener("DOMContentLoaded", function () {
-    const logoutButton = document.getElementById("logoutButton");
-    const confirmLogoutBtn = document.getElementById("confirmLogout");
-    const logoutModalEl = document.getElementById("logoutModal");
-    const logoutModal = new bootstrap.Modal(logoutModalEl, {});
-    
-    logoutButton.addEventListener("click", function () {
-      logoutModal.show();
-    });
-    
-    confirmLogoutBtn.addEventListener("click", function () {
-      window.location.href = PUBLIC_BASE_URL + "/index?logout=true";
-    });
-  });
+  <script src="../assets/js/dashboard.js"></script>
+  <script src="../assets/js/logout.js">
 </script>
 </body>
 </html>
