@@ -174,8 +174,11 @@ function loadFile()
     $uploadOk = 1;
 
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $new_file)) {
-        // return ['status' => 1, 'file' => $new_file];
-        
+        echo json_encode([
+            "errors" => 0,
+            "data" => [],
+            "message" => "The file " . htmlspecialchars(basename($new_file)) . " has been uploaded."
+        ]);
     } else {
         echo json_encode([
             "errors" => 1,
@@ -236,8 +239,6 @@ switch ($action) {
             }
             
             if (!isValidDay($data[$i][3])) {
-                echo("dia valido -> :  ");
-                var_dump($data[$i]);
                 $data_error[] = array($data[$i], "Día no válido. Solo se permiten lunes a sábado.");
                 continue;
             }
