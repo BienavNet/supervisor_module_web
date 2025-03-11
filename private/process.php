@@ -203,8 +203,6 @@ if (!$file_upload_status['status']) {
     return;
 }
 
-
-
 $reader = new ReaderXlsx();
 $spreadSheet = $reader->load($file_upload_status['file']);
 $workSheet = $spreadSheet->getActiveSheet();
@@ -225,18 +223,13 @@ function isValidDay($day)
 
 switch ($action) {
     case 'registerClasses':
-        // $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
             $doc_id = docenteExists($data[$i][1]);
-            echo("docenteExists?: ");
-            var_dump($doc_id);
             if ($doc_id == null) {
                 $data_error[] = array($data[$i], "Docente no existe. Por favor, regístrelo primero.");
                 continue;
             }
             $supervisor_id = supervisorExists($data[$i][7]);
-            echo("supervisorExists?: ");
-            var_dump($doc_id);
             if ($supervisor_id == null) {
                 $data_error[] = array($data[$i], "Supervisor no existe. Por favor, regístrelo primero. ");
                 continue;
