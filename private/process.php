@@ -227,24 +227,25 @@ switch ($action) {
     case 'registerClasses':
         // $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
+
+            if ($data[$i][1] == "null" && $data[$i][1] == null){
+                continue;
+            }
+
             $doc_id = docenteExists($data[$i][1]);
-            echo("docenteExists?: ");
-            var_dump($doc_id);
+            
             if ($doc_id == null) {
                 $data_error[] = array($data[$i], "Docente no existe. Por favor, regístrelo primero.");
                 continue;
             }
             $supervisor_id = supervisorExists($data[$i][7]);
-            echo("supervisorExists?: ");
-            var_dump($doc_id);
+            
             if ($supervisor_id == null) {
                 $data_error[] = array($data[$i], "Supervisor no existe. Por favor, regístrelo primero. ");
                 continue;
             }
             
             if (!isValidDay($data[$i][3])) {
-                echo("dia valido -> :  ");
-                var_dump($data[$i]);
                 $data_error[] = array($data[$i], "Día no válido. Solo se permiten lunes a sábado.");
                 continue;
             }
@@ -286,7 +287,9 @@ switch ($action) {
     case 'registerSupervisor':
         $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
-
+            if ($data[$i][1] == "null" && $data[$i][1] == null){
+                continue;
+            }
             $status = createSupervisors($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
             if (!$status) {
                 $data_error[] = array($data[$i], "No se pudo crear el supervisor.");
@@ -302,7 +305,9 @@ switch ($action) {
     case 'registerDocentes':
         $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
-
+            if ($data[$i][1] == "null" && $data[$i][1] == null){
+                continue;
+            }
             $status = createDocentes($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
             if (!$status) {
                 $data_error[] = array($data[$i], "No se pudo crear el docente.");
