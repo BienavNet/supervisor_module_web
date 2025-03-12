@@ -111,16 +111,23 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
       console.log(" dta: text .",text)
       try {
         const data = JSON.parse(text);
+
         if (data.errors > 0) {
           fileInput.classList.add("is-invalid");
           selectInput.classList.add("is-invalid");
-          console.log(" dta: data.message .", data.message)
-          useToastify(data.message, "error");
+          
+          
+
+          let errorIds = [];
           data.data.forEach(error => {
             const errorMessage = error[1];
-            console.log(" dta: errorMessage .", errorMessage)
-            useToastify(errorMessage, "error");
+            const id = error[0][0]
+            errorIds.push(id)
+            useToastify(errorMessage + `ID ${id} no se registro `, "error");
           });
+
+          useToastify(`se registraron todas menos las de ID: ${errorIds.join(", ")}`, "success");
+        
         } else {
           fileInput.classList.remove("is-invalid");
           selectInput.classList.remove("is-invalid");

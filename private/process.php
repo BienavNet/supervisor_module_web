@@ -174,11 +174,7 @@ function loadFile()
     $uploadOk = 1;
 
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $new_file)) {
-        echo json_encode([
-            "errors" => 0,
-            "data" => [],
-            "message" => "The file " . htmlspecialchars(basename($new_file)) . " has been uploaded."
-        ]);
+        $uploadOk = 1;
     } else {
         echo json_encode([
             "errors" => 1,
@@ -228,7 +224,7 @@ switch ($action) {
     case 'registerClasses':
         for ($i = 0; $i < count($data); $i++) {
 
-            if ($data[$i][1] == "null" && $data[$i][1] == null){
+            if (empty($data[$i][1]) || $data[$i][1] == "null") {
                 continue;
             }
 
@@ -285,7 +281,7 @@ switch ($action) {
     case 'registerSupervisor':
         $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
-            if ($data[$i][1] == "null" && $data[$i][1] == null){
+            if (empty($data[$i][1]) || $data[$i][1] == "null") {
                 continue;
             }
             $status = createSupervisors($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
@@ -303,7 +299,7 @@ switch ($action) {
     case 'registerDocentes':
         $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
-            if ($data[$i][1] == "null" && $data[$i][1] == null){
+            if (empty($data[$i][1]) || $data[$i][1] == "null") {
                 continue;
             }
             $status = createDocentes($data[$i][1], $data[$i][2], $data[$i][3], $data[$i][4], $data[$i][5]);
