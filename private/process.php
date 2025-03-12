@@ -174,8 +174,11 @@ function loadFile()
     $uploadOk = 1;
 
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $new_file)) {
-        // return ['status' => 1, 'file' => $new_file];
-        
+        echo json_encode([
+            "errors" => 0,
+            "data" => [],
+            "message" => "The file " . htmlspecialchars(basename($new_file)) . " has been uploaded."
+        ]);
     } else {
         echo json_encode([
             "errors" => 1,
@@ -203,8 +206,6 @@ if (!$file_upload_status['status']) {
     return;
 }
 
-
-
 $reader = new ReaderXlsx();
 $spreadSheet = $reader->load($file_upload_status['file']);
 $workSheet = $spreadSheet->getActiveSheet();
@@ -225,7 +226,6 @@ function isValidDay($day)
 
 switch ($action) {
     case 'registerClasses':
-        // $data_error = []; 
         for ($i = 0; $i < count($data); $i++) {
 
             if ($data[$i][1] == "null" && $data[$i][1] == null){
@@ -233,13 +233,11 @@ switch ($action) {
             }
 
             $doc_id = docenteExists($data[$i][1]);
-            
             if ($doc_id == null) {
                 $data_error[] = array($data[$i], "Docente no existe. Por favor, regístrelo primero.");
                 continue;
             }
             $supervisor_id = supervisorExists($data[$i][7]);
-            
             if ($supervisor_id == null) {
                 $data_error[] = array($data[$i], "Supervisor no existe. Por favor, regístrelo primero. ");
                 continue;

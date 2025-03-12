@@ -108,14 +108,17 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
   })
     .then(response => response.text())
     .then(text => {
+      console.log(" dta: text .",text)
       try {
         const data = JSON.parse(text);
         if (data.errors > 0) {
           fileInput.classList.add("is-invalid");
           selectInput.classList.add("is-invalid");
+          console.log(" dta: data.message .", data.message)
           useToastify(data.message, "error");
           data.data.forEach(error => {
             const errorMessage = error[1];
+            console.log(" dta: errorMessage .", errorMessage)
             useToastify(errorMessage, "error");
           });
         } else {
@@ -126,6 +129,7 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
       } catch (e) {
         fileInput.classList.add("is-invalid");
         selectInput.classList.add("is-invalid");
+        console.log(" dta: error .", e)
         useToastify(`Error al procesar la respuesta: ${text}`, "error");
       }
     }).catch(

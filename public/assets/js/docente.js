@@ -173,7 +173,6 @@ registerForm.addEventListener("submit", (e) => {
 });
 
 const token_ = document.cookie.replace("access_token=", "").split("; ")[0];
-console.log("token_ :", token_);
 let loadData = fetch(`${API_BASE_URL}/`, {
   headers: {
     "Content-Type": "application/json",
@@ -200,9 +199,8 @@ let loadData = fetch(`${API_BASE_URL}/`, {
   });
 
 function main() {
-  const loadingData = loadData.then((result) => {
-    console.log(" loadin data: ", loadingData);
-    let table = new DataTable("#myTable", {
+  loadData.then((result) => {
+    new DataTable("#myTable", {
       dom: "Bfrtip",
       paging: true,
       columns: [
