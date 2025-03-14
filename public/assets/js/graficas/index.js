@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://appsalones-production-106a.up.railway.app/api";
+const API_BASE_URL = "http://localhost:5000/api";
 // Función para obtener el token de las cookies
 function getAuthToken() {
   const token = document.cookie

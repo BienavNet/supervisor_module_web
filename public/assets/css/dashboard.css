@@ -108,7 +108,10 @@ btn-logout:hover {
 }
 
 @media print {
-    body, html, #wrapper {
+
+    body,
+    html,
+    #wrapper {
         width: 100%;
     }
 }

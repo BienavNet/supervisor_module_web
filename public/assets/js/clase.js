@@ -1,10 +1,14 @@
-const API_BASE = "https://appsalones-production-106a.up.railway.app/api";
+const API_BASE = "http://localhost:5000/api";
 const API_BASE_URL = `${API_BASE}/clase`;
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
+const deleteForm = document.getElementById("deleteAllform");
 const editForm = document.getElementById("editForm");
 const editButtons = document.querySelectorAll(".edit");
 const deleteButtons = document.querySelectorAll(".delete");
+const modal = bootstrap.Modal.getInstance(
+  document.getElementById("eliminarAllModal")
+);
 
 const registerBtn = document.getElementById("registerBtn");
 const useToastify = (messsage, status) => {
@@ -111,22 +115,6 @@ function deleteButtonClick(element) {
     })
       .then((response) => response.json())
       .then((response) => {
-        const useToastify = (messsage, status) => {
-          let background;
-          if (status === "success") {
-            background = "linear-gradient(to right, #f10909, #5b0b0b)";
-          } else if (status === "error") {
-            background =
-              "linear-gradient(to right, rgb(46, 184, 11), rgb(62, 135, 6))";
-          }
-          return Toastify({
-            text: messsage,
-            className: "info",
-            style: {
-              background: background || "gray",
-            },
-          }).showToast();
-        };
         useToastify(response.message, "success");
         window.location.reload();
       });
@@ -138,6 +126,34 @@ function deleteButtonClick(element) {
   }
 }
 
+deleteForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`${API_BASE_URL}/delete/all`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          document.cookie.replace("access_token=", "").split("; ")[0]
+        }`,
+      },
+      credentials: "same-origin",
+    });
+
+    const data = await response.json();
+
+    if (data.status === "ok") {
+      useToastify("Se ha eliminado todo con éxito!.", "success");
+      modal.hide();
+      window.location.reload();
+    } else {
+      useToastify("Error. Revisa que existan las clases.", "error");
+    }
+  } catch (error) {
+    modal.hide();
+    useToastify(`Ocurrió un error: ${error.message}.`, "error");
+  }
+});
 function editButtonClick(element) {
   const children = element.parentElement.parentElement.parentElement.children;
 
@@ -343,6 +359,10 @@ let loadData = fetch(`${API_BASE_URL}/`, {
   .then((response) => response.json())
   .then((response) => {
     let tableData = [];
+    if (response.message === "not found class.") {
+      tableData = 0;
+      return tableData;
+    }
     response.forEach((element) => {
       tableData.push([
         element.id,
@@ -355,13 +375,15 @@ let loadData = fetch(`${API_BASE_URL}/`, {
         element.estado,
       ]);
     });
-    // console.log(tableData)
     return tableData;
   });
 
 function main() {
-  const loadingData = loadData.then((result) => {
-    let table = new DataTable("#myTable", {
+  loadData.then((result) => {
+    if (result.length === 0) {
+      result;
+    }
+    new DataTable("#myTable", {
       dom: "Bfrtip",
       paging: true,
       scrollX: true,

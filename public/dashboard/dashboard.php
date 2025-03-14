@@ -15,8 +15,8 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
 </head>
 <body>
  <div class="container-fluid col justify-content-center my-5" style="width: 100%;">
-    <div class="row m-3">
-        <button class="btn btn-primary" onclick="printPage()">Imprimir</button>
+    <div style="margin: 1rem 0 0 2rem;">
+        <button class="btn btn-primary d-print-none" onclick="printPage()">Imprimir</button>
     </div>
     <div id="salonMenosUtilizadoChart"></div>
     <div id="horasMasFrecuentesChart"></div>
@@ -24,8 +24,6 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
     <div id="docenteMasComentariosChart"></div>
  </div>
     <?php echo constant("BOOTSTRAP_CDN_JS") ?>
+    <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>
-
-
-<!-- <script src="<?php $_SERVER['DOCUMENT_ROOT'] ?>/supervisor_module_web/public/assets/js/dashboard.js"></script> -->

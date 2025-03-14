@@ -1,7 +1,7 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/imports.php");
 
-$URL = "https://appsalones-production-106a.up.railway.app/api/login/sesion";
+$URL = "http://localhost:5000/api/login/sesion";
 session_start();
 
 

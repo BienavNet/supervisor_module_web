@@ -58,6 +58,7 @@
     <div class="mb-3">
     <label for="action" class="form-label">Seleccione el tipo de lista:</label>
   <select name="action" id="action" class="form-select">
+   <option value="Seleccione">Seleccione</option>
     <option value="registerClasses">Registrar Clases</option>
     <option value="registerSupervisor">Registrar Supervisores</option>
     <option value="registerDocentes">Registrar Docentes</option>
@@ -87,65 +88,90 @@
 
 document.getElementById('uploadForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  const formaData = new FormData(this)
-  const loader = document.getElementById('loader');
+ 
+  const formData = new FormData(this);
+    const loader = document.getElementById('loader');
+    const submitButton = document.querySelector("button[type=submit]");
+    const fileInput = document.getElementById("fileToUpload");
+    const selectInput = document.getElementById("action");
+    const instructions = document.querySelector(".instructions.pt5");
 
-  const submitButton = document.querySelector("button[type=submit]");
-  const fileInput = document.getElementById("fileToUpload");
-  const selectInput = document.getElementById("action");
-  const instructions = document.querySelector(".instructions.pt5");
+    const file = fileInput.files[0];
+    if (!file) {
+      useToastify("Por favor seleccione un archivo.", "error");
+      fileInput.classList.add("is-invalid");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      useToastify("El archivo es demasiado grande (máx. 2MB).", "error");
+      fileInput.classList.add("is-invalid");
+      return;
+    }
+    if (!file.name.endsWith(".xlsx")) {
+      useToastify("Solo se permiten archivos XLSX.", "error");
+      fileInput.classList.add("is-invalid");
+      return;
+    }
+    if (selectInput.value === "Seleccione") {
+      useToastify("Seleccione un tipo de lista.", "error");
+      selectInput.classList.add("is-invalid");
+      return; 
+    }
 
-  fileInput.classList.remove("is-invalid");
-  selectInput.classList.remove("is-invalid");
-
-  loader.style.display = "block";
-  submitButton.disabled = true;
-  instructions.style.display = "none";
   
-  fetch('../../private/process.php', {
-    method: 'POST',
-    body: formaData
-  })
+    fileInput.classList.remove("is-invalid");
+    selectInput.classList.remove("is-invalid");
+
+
+    loader.style.display = "block";
+    submitButton.disabled = true;
+    instructions.style.display = "none";
+
+    fetch('../../private/process.php', {
+      method: 'POST',
+      body: formData
+    })
     .then(response => response.text())
     .then(text => {
-      console.log(" dta: text .",text)
+      console.log(" text: ", text)
+      let errores = [];
+      let registrosExitosos = [];
       try {
-        const data = JSON.parse(text);
+    const data = JSON.parse(text);
 
-        if (data.errors > 0) {
-          fileInput.classList.add("is-invalid");
-          selectInput.classList.add("is-invalid");
-          
-          
+    if (data.successData && data.successData.length > 0) {
+      data.successData.forEach(item => {
+        registrosExitosos.push(`ID ${item[0]}: ${item[1]}`);
+      });
+    }
 
-          let errorIds = [];
-          data.data.forEach(error => {
-            const errorMessage = error[1];
-            const id = error[0][0]
-            errorIds.push(id)
-            useToastify(errorMessage + `ID ${id} no se registro `, "error");
-          });
+    if (data.data && data.data.length > 0) {
+      data.data.forEach(item => {
+        const registro = item[0];
+        const errorMensaje = item[1];
+        errores.push(`ID ${registro[0]}: ${errorMensaje}`);
+      });
+    }
 
-          useToastify(`se registraron todas menos las de ID: ${errorIds.join(", ")}`, "success");
-        
-        } else {
-          fileInput.classList.remove("is-invalid");
-          selectInput.classList.remove("is-invalid");
-          useToastify("Carga exitosa", "success");
-        }
-      } catch (e) {
-        fileInput.classList.add("is-invalid");
-        selectInput.classList.add("is-invalid");
-        console.log(" dta: error .", e)
-        useToastify(`Error al procesar la respuesta: ${text}`, "error");
-      }
-    }).catch(
-      e => {
-        fileInput.classList.add("is-invalid");
-        selectInput.classList.add("is-invalid");
-        useToastify(`error en el servidor ${e}`, "error")
-      }
-    ).finally(() => {
+    if (registrosExitosos.length > 0) {
+      useToastify(`${registrosExitosos.length} registros completados exitosamente.`, "success");
+      console.log("Registros exitosos:", registrosExitosos);
+    }
+
+    if (errores.length > 0) {
+      useToastify(`${errores.length} errores encontrados. Verifique los datos.`, "error");
+      console.log("Errores:", errores);
+    }
+
+  } catch (error) {
+    console.error("Error al parsear JSON:", error);
+    useToastify("Respuesta del servidor inválida.", "error");
+  }
+    })
+    .catch(error => {
+      useToastify("Error al conectar con el servidor.", "error");
+    })
+    .finally(() => {
       loader.style.display = "none";
       instructions.style.display = "block";
       submitButton.disabled = false;
