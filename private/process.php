@@ -5,7 +5,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.php");
 require "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module_web/phpspreadsheet/vendor/autoload.php";
 
-const URLBASE = "http://localhost:5000/api";
+const URLBASE = "https://appsalones-production-106a.up.railway.app/api";
 
 function curlRequest($url, $method, $data = null)
 {

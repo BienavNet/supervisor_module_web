@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://appsalones-production-106a.up.railway.app/api";
 const API_BASE_URL = `${API_BASE}/clase`;
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
