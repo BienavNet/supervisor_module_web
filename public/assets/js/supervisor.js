@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:5000/api/supervisor";
+const API_BASE_URL =
+  "https://appsalones-production-106a.up.railway.app/api/supervisor";
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
 const editForm = document.getElementById("editForm");
