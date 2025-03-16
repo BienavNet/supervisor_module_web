@@ -5,7 +5,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx as ReaderXlsx;
 include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.php");
 require "{$_SERVER['DOCUMENT_ROOT']}/supervisor_module_web/phpspreadsheet/vendor/autoload.php";
 
-const URLBASE = "https://appsalones-production-106a.up.railway.app/api";
+const URLBASE = "http://localhost:5000/api";
 
 function curlRequest($url, $method, $data = null)
 {
@@ -448,8 +448,8 @@ switch ($action) {
         echo json_encode([
             'errors' => count($data_error),
             'success' => count($data_success),
-            'data_error' => $data_error,
-            'data_success' => array_values($data_success)
+            'data' => $data_error,
+            'successData' => array_values($data_success)
         ]);
         break;
 
@@ -467,8 +467,8 @@ switch ($action) {
         echo json_encode([
             'errors' => count($data_error),
             'success' => count($data_success),
-            'data_error' => $data_error,
-            'data_success' => array_values($data_success)
+            'data' => $data_error,
+            'successData' => array_values($data_success)
         ]);
         break;
 }

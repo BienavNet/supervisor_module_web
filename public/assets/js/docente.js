@@ -1,11 +1,13 @@
-const API_BASE_URL =
-  "https://appsalones-production-106a.up.railway.app/api/docente";
+const API_BASE_URL = "http://localhost:5000/api/docente";
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
 const editForm = document.getElementById("editForm");
 const editButtons = document.querySelectorAll(".edit");
 const deleteButtons = document.querySelectorAll(".delete");
-
+const deleteForm = document.getElementById("deleteAllform");
+const modal = bootstrap.Modal.getOrCreateInstance(
+  document.getElementById("eliminarAllModal")
+);
 function getAuthToken() {
   const token = document.cookie
     .split("; ")
@@ -117,7 +119,34 @@ function editButtonClick(element) {
     }
   });
 }
+deleteForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`${API_BASE_URL}/deleteall/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          document.cookie.replace("access_token=", "").split("; ")[0]
+        }`,
+      },
+      credentials: "same-origin",
+    });
 
+    const data = await response.json();
+    console.log(" data delete all docente ", data);
+    if (data.status === "ok") {
+      useToastify("Se ha eliminado todo con éxito!.", "success");
+      modal.hide();
+      window.location.reload();
+    } else {
+      useToastify("Error. Revisa que existan los docentes.", "error");
+    }
+  } catch (error) {
+    modal.hide();
+    useToastify(`Ocurrió un error: ${error.message}.`, "error");
+  }
+});
 registerForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const token = getAuthToken();
@@ -184,7 +213,7 @@ let loadData = fetch(`${API_BASE_URL}/`, {
 })
   .then((response) => response.json())
   .then((response) => {
-    console.log(" dagtos del docente ", response);
+    console.log("RESPONSE DOCENTE", response);
     let tableData = [];
     response.forEach((element) => {
       tableData.push([
@@ -195,7 +224,6 @@ let loadData = fetch(`${API_BASE_URL}/`, {
         element.correo,
       ]);
     });
-    console.log(tableData);
     return tableData;
   });
 

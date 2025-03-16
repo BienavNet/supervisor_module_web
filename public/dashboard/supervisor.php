@@ -25,9 +25,15 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
 
 <body>
     <div class="container-fluid container-lg-8">
-        <div style="margin: 1rem 0 0 2rem;">
+        <div 
+        class="d-flex justify-content-around"
+        style="margin: 1rem 0 0 2rem;">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Registrar Supervisor
+            </button>
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarAllModal" id="deleteAllBtn">
+                Eliminar todo
             </button>
         </div>
         <div class="row m-md-3">
@@ -49,6 +55,28 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
         </div>
     </div>
 
+    <div class="modal" id="eliminarAllModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar todos los supervisores</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="deleteAllform">
+                        <div class="my-3 mx-3">
+                            <label>Por favor confirma. Una vez borrado no hay retroceso.</label>
+                        </div>
+                        <div class="mt-4 mx4 row">
+                            <div class="d-flex justify-content-end">
+                                <input type="submit" class="btn btn-danger" value="Vaciar todo">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal" id="registerModal" tabindex="-1">
         <div class="modal-dialog">

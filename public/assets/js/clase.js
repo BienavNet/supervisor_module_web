@@ -1,4 +1,4 @@
-const API_BASE = "https://appsalones-production-106a.up.railway.app/api";
+const API_BASE = "http://localhost:5000/api";
 const API_BASE_URL = `${API_BASE}/clase`;
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
@@ -6,7 +6,7 @@ const deleteForm = document.getElementById("deleteAllform");
 const editForm = document.getElementById("editForm");
 const editButtons = document.querySelectorAll(".edit");
 const deleteButtons = document.querySelectorAll(".delete");
-const modal = bootstrap.Modal.getInstance(
+const modal = bootstrap.Modal.getOrCreateInstance(
   document.getElementById("eliminarAllModal")
 );
 
@@ -63,7 +63,6 @@ registerBtn.addEventListener("click", (e) => {
   })
     .then((result) => result.json())
     .then((result) => {
-      console.log(JSON.stringify(result));
       select2.innerHTML = "";
       result.forEach((element) => {
         let option = document.createElement("option");
@@ -129,7 +128,7 @@ function deleteButtonClick(element) {
 deleteForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   try {
-    const response = await fetch(`${API_BASE_URL}/delete/all`, {
+    const response = await fetch(`${API_BASE_URL}/deleteall/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://appsalones-production-106a.up.railway.app/api";
+const API_BASE_URL = "http://localhost:5000/api";
 // Función para obtener el token de las cookies
 function getAuthToken() {
   const token = document.cookie
@@ -11,6 +11,13 @@ function getAuthToken() {
 // Cargar Google Charts
 google.charts.load("current", { packages: ["corechart", "bar", "line"] });
 google.charts.setOnLoadCallback(fetchDataAndRenderCharts);
+
+function showNoDataMessage(elementId) {
+  const container = document.getElementById(elementId);
+  if (container) {
+    container.innerHTML = `<p style="text-align: center; font-weight: bold; color: red; padding:8;">No hay gráfica que mostrar</p>`;
+  }
+}
 
 async function fetchDataAndRenderCharts() {
   const token = getAuthToken();
@@ -54,29 +61,41 @@ async function fetchDataAndRenderCharts() {
     const dqmct =
       responses[3]?.status === "fulfilled" ? responses[3].value : [];
 
-    if (smenosu.length)
+    if (smenosu.length) {
       drawBarChart(
         "salonMenosUtilizadoChart",
         smenosu,
         "Salón",
         "Cantidad de usos"
       );
-    if (diasmas.length)
+    } else {
+      showNoDataMessage("salonMenosUtilizadoChart");
+    }
+    if (diasmas.length) {
       drawLineChart(
         "diasMasAsignadoChart",
         diasmas,
         "Día",
         "Cantidad asignaciones"
       );
-    if (hoursmas.length)
+    } else {
+      showNoDataMessage("diasMasAsignadoChart");
+    }
+    if (hoursmas.length) {
       drawPieChart("horasMasFrecuentesChart", hoursmas, "Horas más frecuentes");
-    if (dqmct.length)
+    } else {
+      showNoDataMessage("horasMasFrecuentesChart");
+    }
+    if (dqmct.length) {
       drawBarChart(
         "docenteMasComentariosChart",
         dqmct,
         "Docente",
         "Comentarios"
       );
+    } else {
+      showNoDataMessage("docenteMasComentariosChart");
+    }
   } catch (error) {
     console.error("❌ Error al obtener los datos:", error);
   }

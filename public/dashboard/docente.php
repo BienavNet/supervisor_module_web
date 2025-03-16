@@ -27,11 +27,19 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
 
 <body>
     <div class="container-fluid">
-        <div style="margin: 1rem 0 0 2rem;">
+        <div 
+        class="d-flex justify-content-around"
+        style="margin: 1rem 0 0 2rem;">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
                 Registrar Docentes
             </button>
+
+            
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarAllModal" id="deleteAllBtn">
+                Eliminar todo
+            </button>
         </div>
+
         <div class="row m-md-3">
             <table class="table" id="myTable">
                 <thead>
@@ -51,6 +59,33 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
         </div>
     </div>
 
+    <div class="modal" id="eliminarAllModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar todos los docentes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="deleteAllform">
+                        <div class="my-3 mx-3">
+                            <label>Por favor confirma. Una vez borrado no hay retroceso.</label>
+                        </div>
+                        <div class="my-3 mx-3">
+                            <label >Recuerde que al borrar todo se eliminaran los reportes realizados por dicho docentes. </label>
+                            <label >Recuerde que al borrar todo se eliminaran los comentarios realizados por dicho docentes. </label>
+                            <label >Recuerde que al borrar todo se eliminaran los horarios realizados  por dicho docente. </label>
+                        </div>
+                        <div class="mt-4 mx4 row">
+                            <div class="d-flex justify-content-end">
+                                <input type="submit" class="btn btn-danger" value="Vaciar todo">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal" id="registerModal" tabindex="-1">
         <div class="modal-dialog">

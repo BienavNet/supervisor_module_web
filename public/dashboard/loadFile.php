@@ -160,9 +160,13 @@ document.getElementById('uploadForm').addEventListener('submit', function (e) {
 
     if (errores.length > 0) {
       useToastify(`${errores.length} errores encontrados. Verifique los datos.`, "error");
-      console.log("Errores:", errores);
     }
+    if (errores.length > 0) {
+  errores.forEach(error => {
+    useToastify(error, "error"); 
+  });
 
+}
   } catch (error) {
     console.error("Error al parsear JSON:", error);
     useToastify("Respuesta del servidor inválida.", "error");

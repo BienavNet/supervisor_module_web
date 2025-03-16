@@ -1,11 +1,13 @@
-const API_BASE_URL =
-  "https://appsalones-production-106a.up.railway.app/api/supervisor";
+const API_BASE_URL = "http://localhost:5000/api/supervisor";
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
 const editForm = document.getElementById("editForm");
 const editButtons = document.querySelectorAll(".edit");
 const deleteButtons = document.querySelectorAll(".delete");
-
+const deleteForm = document.getElementById("deleteAllform");
+const modal = bootstrap.Modal.getOrCreateInstance(
+  document.getElementById("eliminarAllModal")
+);
 const useToastify = (messsage, status) => {
   // status = ["success", "error"]
   let background;
@@ -168,7 +170,34 @@ registerForm.addEventListener("submit", (e) => {
       });
   }
 });
+deleteForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`${API_BASE_URL}/deleteall/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          document.cookie.replace("access_token=", "").split("; ")[0]
+        }`,
+      },
+      credentials: "same-origin",
+    });
 
+    const data = await response.json();
+    console.log(" data delete all supervisor ", data);
+    if (data.status === "ok") {
+      useToastify("Se ha eliminado todo con éxito!.", "success");
+      modal.hide();
+      window.location.reload();
+    } else {
+      useToastify("Error. Revisa que existan los supervisores.", "error");
+    }
+  } catch (error) {
+    modal.hide();
+    useToastify(`Ocurrió un error: ${error.message}.`, "error");
+  }
+});
 let loadData = fetch(`${API_BASE_URL}/`, {
   headers: {
     "Content-Type": "application/json",

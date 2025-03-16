@@ -1,6 +1,5 @@
-const API_BASE = "https://appsalones-production-106a.up.railway.app/api";
-const API_BASE_URL =
-  "https://appsalones-production-106a.up.railway.app/api/horarios";
+const API_BASE = "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:5000/api/horarios";
 const tbody = document.getElementById("tbody");
 const registerForm = document.getElementById("registerForm");
 const editForm = document.getElementById("editForm");
@@ -27,6 +26,9 @@ registerBtn.addEventListener("click", (e) => {
   const select = document.getElementById("docentes-select");
   const select2 = document.getElementById("asignatura-select");
 
+  select.innerHTML = "";
+  select2.innerHTML = "";
+
   fetch(`${API_BASE}/docente/`, {
     headers: {
       "Content-Type": "application/json",
@@ -38,13 +40,21 @@ registerBtn.addEventListener("click", (e) => {
   })
     .then((result) => result.json())
     .then((result) => {
-      result.forEach((element) => {
+      if (result.length === 0) {
         let option = document.createElement("option");
-        option.value = element.docente_id;
-        option.innerHTML =
-          `${element.nombre} ${element.apellido} ${element.cedula}`.toUpperCase();
+        option.textContent = "No hay docentes disponible";
+        option.disabled = true;
+        option.selected = true;
         select.appendChild(option);
-      });
+      } else {
+        result.forEach((element) => {
+          let option = document.createElement("option");
+          option.value = element.docente_id;
+          option.innerHTML =
+            `${element.nombre} ${element.apellido} ${element.cedula}`.toUpperCase();
+          select.appendChild(option);
+        });
+      }
     });
 
   fetch("../json/asignaturas.json")
@@ -291,24 +301,34 @@ let loadData = fetch(`${API_BASE_URL}/`, {
 })
   .then((response) => response.json())
   .then((response) => {
-    const dataArray = response.data || response;
-    let tableData = [];
-    dataArray.forEach((element) => {
-      tableData.push([
-        element.id,
-        `${element.nombre} ${element.apellido} ${element.cedula}`,
-        element.asignatura,
-        element.dia,
-        element.hora_inicio,
-        element.hora_fin,
-      ]);
-    });
+    if (response.message === "not found schedules.") {
+      console.log("No hay horarios disponibles.");
+      return (response = []);
+    }
+    // if (!response.data || response.data.length === 0) {
+    //   console.log("No hay horarios disponibles.");
+    //   return (response = 0);
+    // }
+
+    let tableData = response.data.map((element) => [
+      element.id,
+      `${element.nombre} ${element.apellido} ${element.cedula}`,
+      element.asignatura,
+      element.dia,
+      element.hora_inicio,
+      element.hora_fin,
+    ]);
+
     return tableData;
+  })
+  .catch((error) => {
+    console.error("Error al obtener los datos:", error);
+    return [];
   });
 
 function main() {
-  const loadingData = loadData.then((result) => {
-    let table = new DataTable("#myTable", {
+  loadData.then((result) => {
+    new DataTable("#myTable", {
       dom: "Bfrtip",
       paging: true,
       scrollX: true,

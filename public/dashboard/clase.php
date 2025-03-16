@@ -63,10 +63,10 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
                 </div>
                 <div class="modal-body">
                     <form method="post" id="deleteAllform">
-                        <div class="my-3 mx-4">
+                        <div class="my-3 mx-3">
                             <label>Por favor confirma. Una vez borrado no hay retroceso.</label>
                         </div>
-                        <div class="my-3 mx-4">
+                        <div class="my-3 mx-3">
                             <label >Recuerde que al borrar las clases se eliminaran los reporte realizados a dichas clases. </label>
                         </div>
                         <div class="mt-4 mx4 row">
