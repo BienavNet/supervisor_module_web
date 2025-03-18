@@ -311,7 +311,7 @@ let loadData = fetch(`${API_BASE_URL}/`, {
     //   return (response = 0);
     // }
 
-    let tableData = response.data.map((element) => [
+    let tableData = response.map((element) => [
       element.id,
       `${element.nombre} ${element.apellido} ${element.cedula}`,
       element.asignatura,
