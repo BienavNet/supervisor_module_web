@@ -33,10 +33,6 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/supervisor_module_web/config/session.
                 Registrar Horarios
             </button>
 
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#eliminarAllModal" id="deleteAllBtn">
-                Eliminar todo
-            </button>
-
         </div>
         <div class="row m-md-3">
             <table class="table" id="myTable">

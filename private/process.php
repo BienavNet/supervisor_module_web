@@ -25,7 +25,7 @@ function curlRequest($url, $method, $data = null)
     $response = json_decode(curl_exec($ch), true);
     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-
+  
     return array(
         'response' => $response,
         'httpcode' => $httpcode
@@ -93,7 +93,6 @@ function createDocentes($nombre, $apellido, $cedula, $correo, $contrasena)
         'correo' => $correo,
         'contrasena' => $contrasena
     ));
-
     if ($response['httpcode'] == 200) {
         return true;
     } else {
@@ -342,6 +341,8 @@ function supervisorExists($cedula)
 switch ($action) {
     case 'registerClasses':
         foreach ($data as $row) {
+            if (empty(array_filter($row))) continue;
+
             if (empty($row[1]) || $row[1] == "null") continue;
 
             $valid_day = isValidDay($row[3]);
@@ -471,7 +472,6 @@ switch ($action) {
     case 'registerDocentes':
         foreach ($data as $row) {
             if (empty($row[1]) || $row[1] == "null") continue;
-    
             if (!createDocentes($row[1], $row[2], $row[3], $row[4], $row[5])) {
                 $data_error[] = [$row, "No se pudo crear el docente."];
             } else {
