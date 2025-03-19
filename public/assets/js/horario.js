@@ -6,7 +6,7 @@ const registerForm = document.getElementById("registerForm");
 const editForm = document.getElementById("editForm");
 const editButtons = document.querySelectorAll(".edit");
 const deleteButtons = document.querySelectorAll(".delete");
-
+const deleteForm = document.getElementById("deleteAllform");
 const registerBtn = document.getElementById("registerBtn");
 const useToastify = (messsage, status) => {
   let background;
@@ -23,6 +23,36 @@ const useToastify = (messsage, status) => {
     },
   }).showToast();
 };
+
+deleteForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch(`${API_BASE_URL}/deleteall/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${
+          document.cookie.replace("access_token=", "").split("; ")[0]
+        }`,
+      },
+      credentials: "same-origin",
+    });
+
+    const data = await response.json();
+
+    if (data.status === "ok") {
+      useToastify("Se ha eliminado todo con éxito!.", "success");
+      modal.hide();
+      window.location.reload();
+    } else {
+      useToastify("Error. Revisa que existan los horarios.", "error");
+    }
+  } catch (error) {
+    modal.hide();
+    useToastify(`Ocurrió un error: ${error.message}.`, "error");
+  }
+});
+
 registerBtn.addEventListener("click", (e) => {
   const select = document.getElementById("docentes-select");
   const select2 = document.getElementById("asignatura-select");
@@ -179,48 +209,68 @@ function editButtonClick(element) {
       let response = confirm("Confirme la acción: Actualizar datos.");
 
       if (response) {
-        fetch(`${API_BASE_URL}/update/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify({
-            docente: doc_select.value,
-            asignatura: subject.value,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              document.cookie.replace("access_token=", "").split("; ")[0]
-            }`,
-          },
-          credentials: "same-origin",
-        })
-          .then((response) => response.json())
-          .then((response) => {
-            if (response.status == "ok") {
-              fetch(`${API_BASE}/horarios/detalles/update/horario/${id}`, {
-                method: "PATCH",
-                body: JSON.stringify({
-                  horario: id,
-                  dia: dia,
-                  hora_inicio: inicio,
-                  hora_fin: hora_fin,
-                }),
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${
-                    document.cookie.replace("access_token=", "").split("; ")[0]
-                  }`,
-                },
-                credentials: "same-origin",
-              }).then((response) => response.json());
-              then((response) => {
-                useToastify(response.message, "success");
-              });
+        let datosActualizar = {};
 
+        // Solo agregar los valores si han cambiado
+        if (doc_select.value !== doc_id) {
+          datosActualizar.docente = doc_select.value;
+        }
+
+        if (subject.value !== asignatura) {
+          datosActualizar.asignatura = subject.value;
+        }
+
+        // Función para actualizar el horario después de actualizar asignatura o docente
+        const actualizarHorario = () => {
+          fetch(`${API_BASE}/horarios/detalles/update/horario/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+              horario: id,
+              dia: dia,
+              hora_inicio: inicio,
+              hora_fin: fin,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${
+                document.cookie.replace("access_token=", "").split("; ")[0]
+              }`,
+            },
+            credentials: "same-origin",
+          })
+            .then((response) => response.json())
+            .then((response) => {
+              console.log(" respos, ", response);
+              useToastify(response.message, "success");
               window.location.reload();
-            } else {
-              useToastify(response.message, "error");
-            }
-          });
+            });
+        };
+
+        // Si hay cambios en docente o asignatura, actualizar primero eso
+        if (Object.keys(datosActualizar).length > 0) {
+          fetch(`${API_BASE_URL}/update/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(datosActualizar),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${
+                document.cookie.replace("access_token=", "").split("; ")[0]
+              }`,
+            },
+            credentials: "same-origin",
+          })
+            .then((response) => response.json())
+            .then((response) => {
+              if (response.status == "ok") {
+                actualizarHorario();
+              } else {
+                useToastify(response.message, "error");
+              }
+            });
+        } else {
+          // Si no hay cambios en docente/asignatura, pasar directamente a actualizar el horario
+          actualizarHorario();
+        }
       }
     }
   });

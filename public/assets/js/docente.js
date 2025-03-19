@@ -214,7 +214,6 @@ let loadData = fetch(`${API_BASE_URL}/`, {
 })
   .then((response) => response.json())
   .then((response) => {
-    console.log("RESPONSE DOCENTE", response);
     let tableData = [];
     response.forEach((element) => {
       tableData.push([

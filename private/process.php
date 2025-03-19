@@ -412,17 +412,32 @@ switch ($action) {
             $end_date = date('Y-m-d', strtotime($row[9]));
 
             $registro_exitoso = false;
-        do {
-            if (createClasses($horario_id, $salon_id, $supervisor_id, $start_date)) {
-                $registro_exitoso = true;
-            } else {
-                $data_error[] = [$row, "Error al crear clases."];
-            }
-            $start_date = date("Y-m-d", strtotime($start_date . '+ 7 days'));
-        } while ($start_date <= $end_date);
 
-        if ($registro_exitoso) {
-            $data_success[$row[0]] = [$row, "Clase(s) creada(s) correctamente."];
+            $day_of_week = [
+                'Domingo' => 0, 'Lunes' => 1, 'Martes' => 2, 'Miércoles' => 3,
+                'Jueves' => 4, 'Viernes' => 5, 'Sábado' => 6
+            ];
+
+            $target_day = $day_of_week[$row[3]] ?? null;
+
+        if ($target_day === null) {
+            $data_error[] = [$row, "Día de la semana inválido: " . $row[3]];
+        } else {
+            $current_date = $start_date;
+            while ($current_date <= $end_date) {
+                if (date('w', strtotime($current_date)) == $target_day) {
+                    if (createClasses($horario_id, $salon_id, $supervisor_id, $current_date)) {
+                        $registro_exitoso = true;
+                    } else {
+                        $data_error[] = [$row, "Error al crear clases para la fecha $current_date."];
+                    }
+                }
+                $current_date = date("Y-m-d", strtotime($current_date . "+1 day"));
+            }
+        
+            if ($registro_exitoso) {
+                $data_success[$row[0]] = [$row, "Clase(s) creada(s) correctamente."];
+            }
         }
         }
 
